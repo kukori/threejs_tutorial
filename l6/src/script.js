@@ -1,11 +1,11 @@
 import './style.css'
-import { Scene, BoxGeometry, MeshBasicMaterial, Mesh, PerspectiveCamera, WebGLRenderer } from 'three'
+import * as THREE from 'three'
 
-const scene = new Scene();
+const scene = new THREE.Scene();
 
-const geometry = new BoxGeometry(1, 1, 1)
-const material = new MeshBasicMaterial({ color: '#e0005a'})
-const mesh = new Mesh(geometry, material)
+const geometry = new THREE.BoxGeometry(1, 1, 1)
+const material = new THREE.MeshBasicMaterial({ color: '#e0005a'})
+const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
 const sizes = {
@@ -13,7 +13,7 @@ const sizes = {
     height: 600
 }
 
-const camera = new PerspectiveCamera(75, sizes.width / sizes.height )
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height )
 // y: up
 // y: left
 // z: towards us
@@ -21,22 +21,23 @@ camera.position.z = 3
 scene.add(camera)
 
 const canvas = document.querySelector('.webgl')
-const renderer = new WebGLRenderer({
+const renderer = new THREE.WebGLRenderer({
     canvas,
 })
 renderer.setSize(sizes.width, sizes.height)
 
-let time = Date.now()
+let clock = new THREE.Clock()
 
 const tick = () => {
 
-    const currentTime = Date.now()
-    const delta = currentTime - time;
-    time = currentTime
+    const elapsedTime = clock.getElapsedTime()
 
-    mesh.rotation.y += 0.001 * delta
-    mesh.rotation.x += 0.001 * delta
-    mesh.rotation.z -= 0.001 * delta
+    // 1 rotation / second
+    mesh.rotation.y = elapsedTime * Math.PI * 2
+    mesh.rotation.x = elapsedTime
+    mesh.rotation.z = elapsedTime
+
+    mesh.position.y = Math.sin(elapsedTime)
 
     renderer.render(scene, camera)
 
